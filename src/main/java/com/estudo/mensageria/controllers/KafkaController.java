@@ -16,4 +16,9 @@ public class KafkaController {
     public void sendMessage(@RequestBody String message){
         kafkaTemplate.send("my-topic", message);
     }
+
+    @PostMapping("/send/pattern")
+    public void sendMessageWithPattern(@RequestBody String message){
+        kafkaTemplate.send("pedido-9", message);
+    }
 }

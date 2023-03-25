@@ -9,4 +9,9 @@ public class KafkaLConsumerService {
     public  void listen(String message){
         System.out.println("Received Message: " + message);
     }
+
+    @KafkaListener(topicPattern = "pedido-[0-9]+", groupId = "my-group")
+    public void listenWithPattern(String message){
+        System.out.println("Received Message: " + message);
+    }
 }
