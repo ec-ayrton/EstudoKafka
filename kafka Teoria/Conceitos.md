@@ -15,3 +15,6 @@
 ### Brokers
 > Os brokers são responsáveis por gerenciar os tópicos, as partições e as réplicas, além de controlar a troca de mensagens entre os produtores e consumidores.
 Quando um produtor envia uma mensagem para um tópico, o broker é responsável por garantir que essa mensagem seja armazenada na partição correta. E quando um consumidor faz uma solicitação de leitura de registros, o broker é responsável por recuperar as mensagens da partição correspondente e entregá-las ao consumidor.
+
+### Grupo
+> É usado para  identificar um grupo de consumidores que compartilham a carga de processamento de mensagens de um ou mais tópicos. Quando vários consumidores se juntam ao mesmo grupo e se inscrevem para o mesmo tópico, o Kafka distribui as partições do tópico de forma equitativa entre eles. Cada partição é atribuída a apenas um consumidor do grupo.
