@@ -5,7 +5,7 @@
 ### Topico
 > Um tópico no Apache Kafka é um fluxo ordenado de registros.
 >É semelhante a uma tabela em um banco de dados relacional ou a uma fila em um sistema de mensagens.
-</br>
+
 ### Partição
 > A partição é uma unidade de paralelismo no Kafka. Ela permite que os dados de um tópico sejam distribuídos em vários servidores Kafka, permitindo maior capacidade de processamento e maior escalabilidade.
 ### Replicação
