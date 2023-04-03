@@ -54,7 +54,7 @@ Assim essa fábrica vai criar os consumidores com as configurações já pré-de
         factory.setConcurrency(3);
         factory.getContainerProperties().setPollTimeout(3000);
 
-        settingConfigDLT(factory,kafkaTemplate);
+        settingConfigDLQ(factory,kafkaTemplate);
 
         return factory;
     }
@@ -82,12 +82,12 @@ Assim essa fábrica vai criar os consumidores com as configurações já pré-de
       Caso não haja, ele retornará uma lista vazia. A configuração é importante para evitar o consumo de recursos, 
       como aguardar demasiadamente por novos registros podendo causar demora no processamente de novos registros de forma desnecessária.
 
-#### _settingConfigDLT(factory,kafkaTemplate);_
-     private void settingConfigDLT(ConcurrentKafkaListenerContainerFactory<String, String> factory,KafkaTemplate<String,String> kafkaTemplate) {
+#### _settingConfigDLQ(factory,kafkaTemplate);_
+     private void settingConfigDLQ(ConcurrentKafkaListenerContainerFactory<String, String> factory,KafkaTemplate<String,String> kafkaTemplate) {
         DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(kafkaTemplate,(data, exception) -> {
-            String dltTopic = "DeadQueue.DLT";
-            int dltPartition = -1;
-            return new TopicPartition(dltTopic, dltPartition);
+            String dlqTopic = "DeadQueue.DLQ";
+            int dlqPartition = -1;
+            return new TopicPartition(dlqTopic, dlqPartition);
         });
         DefaultErrorHandler errorHandler = new DefaultErrorHandler(recoverer, new FixedBackOff(1000L, 1));
         factory.setCommonErrorHandler(errorHandler);
@@ -96,7 +96,7 @@ Assim essa fábrica vai criar os consumidores com as configurações já pré-de
     Aqui a implementação desse método se faz necessária para tratar dos Registros que não foram processados com sucesso e foram enviador para a DeadListQueue.
     Sobre o método:
     - O recover é um objeto DeadLetterPublishingRecoverer responsavel por definir como tratar os registros que não foram tratados com sucesso e foram enviados para a dead-letter.
-      Nesse caso foi implementado para usaro o kafkaTemplate para enviar os registros da dead-letter para um tópico chamado "DeadQueue.DLT" .
+      Nesse caso foi implementado para usaro o kafkaTemplate para enviar os registros da dead-letter para um tópico chamado "DeadQueue.DLQ" .
     - O errorHandler é um objeto DefaultErrorHandler que é responsavel por chamar o método recover() do objeto DeadLetterPublishingRecoverer quando ocorre um erro no processamento do registro e 
       por definir o inverfalo de espera entre as tentativas de processamento.
     por fim é configurado para o factory usar o errorHandler.

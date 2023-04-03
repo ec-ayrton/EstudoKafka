@@ -41,7 +41,7 @@ public class KafkaConfig {
         factory.setConcurrency(3);
         factory.getContainerProperties().setPollTimeout(3000);
 
-        settingConfigDLT(factory,kafkaTemplate);
+        settingConfigDLQ(factory,kafkaTemplate);
 
         return factory;
     }
@@ -63,11 +63,11 @@ public class KafkaConfig {
         return props;
     }
 
-    private void settingConfigDLT(ConcurrentKafkaListenerContainerFactory<String, String> factory,KafkaTemplate<String,String> kafkaTemplate) {
+    private void settingConfigDLQ(ConcurrentKafkaListenerContainerFactory<String, String> factory,KafkaTemplate<String,String> kafkaTemplate) {
         DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(kafkaTemplate,(data, exception) -> {
-            String dltTopic = "DeadQueue.DLT";
-            int dltPartition = -1;
-            return new TopicPartition(dltTopic, dltPartition);
+            String dlqTopic = "DeadQueue.DLQ";
+            int dlqPartition = -1;
+            return new TopicPartition(dlqTopic, dlqPartition);
         });
         DefaultErrorHandler errorHandler = new DefaultErrorHandler(recoverer, new FixedBackOff(1000L, 1));
         factory.setCommonErrorHandler(errorHandler);

@@ -24,13 +24,13 @@ public class DeadLetter implements Serializable {
 
     private int partition;
 
-    private Long dltOffset;
+    private Long dlqOffset;
 
-    private String dltKey;
+    private String dlqKey;
 
-    private String dltValue;
+    private String dlqValue;
 
-    private String dltDate;
+    private String dlqDate;
 
 }
 

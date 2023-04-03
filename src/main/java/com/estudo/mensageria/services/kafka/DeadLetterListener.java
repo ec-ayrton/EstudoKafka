@@ -21,17 +21,17 @@ public class DeadLetterListener {
 
     private static final Logger logger = LoggerFactory.getLogger(DeadLetterListener.class);
 
-    @KafkaListener(topics = "DeadQueue.DLT", groupId = "my-group", containerFactory = "kafkaListenerContainerFactory")
+    @KafkaListener(topics = "DeadQueue.DLQ", groupId = "my-group", containerFactory = "kafkaListenerContainerFactory")
     public void listenDeadLetter(@Payload ConsumerRecord<String, String> data) {
         logger.warn("Received message from dead letter queue. Persisting in database.");
 
         DeadLetter deadLetter = new DeadLetter();
         deadLetter.setTopic(data.topic());
         deadLetter.setPartition(data.partition());
-        deadLetter.setDltOffset(data.offset());
-        deadLetter.setDltKey(data.key());
-        deadLetter.setDltValue(data.value());
-        deadLetter.setDltDate(getHourDeadQueue());
+        deadLetter.setDlqOffset(data.offset());
+        deadLetter.setDlqKey(data.key());
+        deadLetter.setDlqValue(data.value());
+        deadLetter.setDlqDate(getHourDeadQueue());
 
         deadLetterRepository.save(deadLetter);
     }
