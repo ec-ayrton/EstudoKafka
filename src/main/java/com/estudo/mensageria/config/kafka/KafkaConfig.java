@@ -40,15 +40,8 @@ public class KafkaConfig {
         factory.setConsumerFactory(consumerFactory());
         factory.setConcurrency(3);
         factory.getContainerProperties().setPollTimeout(3000);
-        factory.getContainerProperties().setDeliveryAttemptHeader(true);
 
-        DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(kafkaTemplate,(data, exception) -> {
-            String dltTopic = "orders.DLT";
-            int dltPartition = -1;
-            return new TopicPartition(dltTopic, dltPartition);
-        });
-        DefaultErrorHandler errorHandler = new DefaultErrorHandler(recoverer, new FixedBackOff(1000L, 1));
-        factory.setCommonErrorHandler(errorHandler);
+        settingConfigDLT(factory,kafkaTemplate);
 
         return factory;
     }
@@ -68,6 +61,16 @@ public class KafkaConfig {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         return props;
+    }
+
+    private void settingConfigDLT(ConcurrentKafkaListenerContainerFactory<String, String> factory,KafkaTemplate<String,String> kafkaTemplate) {
+        DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(kafkaTemplate,(data, exception) -> {
+            String dltTopic = "DeadQueue.DLT";
+            int dltPartition = -1;
+            return new TopicPartition(dltTopic, dltPartition);
+        });
+        DefaultErrorHandler errorHandler = new DefaultErrorHandler(recoverer, new FixedBackOff(1000L, 1));
+        factory.setCommonErrorHandler(errorHandler);
     }
 }
 

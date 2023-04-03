@@ -10,6 +10,9 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Component
 public class DeadLetterListener {
 
@@ -18,7 +21,7 @@ public class DeadLetterListener {
 
     private static final Logger logger = LoggerFactory.getLogger(DeadLetterListener.class);
 
-    @KafkaListener(topics = "orders.DLT", groupId = "my-group", containerFactory = "kafkaListenerContainerFactory")
+    @KafkaListener(topics = "DeadQueue.DLT", groupId = "my-group", containerFactory = "kafkaListenerContainerFactory")
     public void listenDeadLetter(@Payload ConsumerRecord<String, String> data) {
         logger.warn("Received message from dead letter queue. Persisting in database.");
 
@@ -28,7 +31,15 @@ public class DeadLetterListener {
         deadLetter.setDltOffset(data.offset());
         deadLetter.setDltKey(data.key());
         deadLetter.setDltValue(data.value());
+        deadLetter.setDltDate(getHourDeadQueue());
 
         deadLetterRepository.save(deadLetter);
+    }
+
+    private String getHourDeadQueue(){
+        LocalDateTime now = LocalDateTime.now();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        return now.format(formatter);
     }
 }

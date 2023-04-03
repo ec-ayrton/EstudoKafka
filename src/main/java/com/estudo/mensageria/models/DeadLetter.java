@@ -30,5 +30,7 @@ public class DeadLetter implements Serializable {
 
     private String dltValue;
 
+    private String dltDate;
+
 }
 
